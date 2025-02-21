@@ -168,13 +168,21 @@ def create_click_record(request, link):
     if ip_address in ('127.0.0.1', '::1', ''):
         ip_address = '8.8.8.8'  # Public IP for testing
 
+    print(f"Processing IP address: {ip_address}")
+    print(f"GeoIP Path: {settings.GEOIP_PATH}")
+    print(f"GeoIP File exists: {(settings.GEOIP_PATH / 'GeoLite2-City.mmdb').exists()}")
+
     # Get country from IP using geoip2
     try:
-        with geoip2.database.Reader(settings.GEOIP_PATH / 'GeoLite2-City.mmdb') as reader:
+        geoip_file = settings.GEOIP_PATH / 'GeoLite2-City.mmdb'
+        print(f"Attempting to read GeoIP database from: {geoip_file}")
+        with geoip2.database.Reader(geoip_file) as reader:
             response = reader.city(ip_address)
             country = response.country.name or 'Unknown'
+            print(f"Successfully got country: {country}")
     except (GeoIP2Error, Exception) as e:
         print(f"Geolocation error: {e}")
+        print(f"Error type: {type(e)}")
         country = 'Unknown'
 
     # Get device type from user agent
@@ -205,7 +213,7 @@ def create_click_record(request, link):
                 longitude=response.location.longitude
             )
     except (GeoIP2Error, Exception) as e:
-        print(f"Geolocation error: {e}")
+        print(f"IPInfo creation error: {e}")
         ip_info = None
 
     # Create click record with ip_info
