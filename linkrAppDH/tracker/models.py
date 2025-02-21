@@ -49,7 +49,7 @@ class Link(models.Model):
             query_params = []
             for variable in self.variables.all():
                 # Don't URL encode the placeholder value
-                query_params.append(f"{variable.name}={{{{custom_attribute.${variable.placeholder}}}}}")
+                query_params.append(f"{variable.name}={variable.placeholder}")
             query_string = "&".join(query_params)
             return f"{base_url}?{query_string}"
         return base_url

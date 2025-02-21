@@ -88,14 +88,12 @@ def generate_link(request):
             
             for name, placeholder in zip(variables, placeholders):
                 if name and placeholder:
-                    # Clean variable name: remove spaces and special characters
-                    clean_name = ''.join(e for e in name if e.isalnum() or e == '_').lower()
-                    if clean_name:  # Only create if we have a valid name
-                        LinkVariable.objects.create(
-                            link=link,
-                            name=clean_name,
-                            placeholder=placeholder
-                        )
+                    # Create variable without cleaning the name
+                    LinkVariable.objects.create(
+                        link=link,
+                        name=name,
+                        placeholder=placeholder
+                    )
 
             # Update campaign total clicks if link is part of a campaign
             if link.campaign:
@@ -241,9 +239,8 @@ def track_click(request, short_id):
 
         # Track variables
         for variable in link.variables.all():
-            # Clean the variable name to match how it was saved
-            clean_name = ''.join(e for e in variable.name if e.isalnum() or e == '_').lower()
-            value = request.GET.get(clean_name, '')
+            # Use the variable name as is
+            value = request.GET.get(variable.name, '')
             if value:
                 # URL decode the value if needed
                 try:
