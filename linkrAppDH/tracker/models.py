@@ -44,14 +44,11 @@ class Link(models.Model):
         
         base_url = f"{protocol}://{domain}/tracker/{self.short_id}"
         
-        # If there are any variables, add them as query parameters without URL encoding the placeholder
+        # If there are any variables, add them as query parameters without any encoding
         if self.variables.exists():
-            query_params = []
-            for variable in self.variables.all():
-                # Don't URL encode the placeholder value
-                query_params.append(f"{variable.name}={variable.placeholder}")
-            query_string = "&".join(query_params)
-            return f"{base_url}?{query_string}"
+            # Just use the raw variable name and placeholder without any modification
+            params = [f"{var.name}={var.placeholder}" for var in self.variables.all()]
+            return f"{base_url}?{'&'.join(params)}"
         return base_url
 
 class LinkVariable(models.Model):
