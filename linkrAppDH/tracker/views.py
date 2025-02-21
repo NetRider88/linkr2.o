@@ -358,10 +358,24 @@ def analytics(request, short_id):
                         name='Clicks by Day'), row=2, col=1)
 
     # Add hourly distribution
-    hour_data = clicks.values('hour').annotate(count=Count('id')).order_by('hour')
-    fig.add_trace(go.Bar(x=[f"{d['hour']:02d}:00" for d in hour_data],
-                        y=[d['count'] for d in hour_data],
-                        name='Clicks by Hour'), row=2, col=2)
+    hour_data = clicks.annotate(
+        local_hour=ExtractHour('timestamp')
+    ).values('local_hour').annotate(
+        count=Count('id')
+    ).order_by('local_hour')
+
+    fig.add_trace(go.Bar(
+        x=[f"{d['local_hour']:02d}:00" for d in hour_data],
+        y=[d['count'] for d in hour_data],
+        name='Clicks by Hour'
+    ), row=2, col=2)
+
+    # Update x-axis for hour chart to show 24-hour format
+    fig.update_xaxes(
+        ticktext=[f"{h:02d}:00" for h in range(24)],
+        tickvals=list(range(24)),
+        row=2, col=2
+    )
 
     # Add variable values distribution
     variable_data = []

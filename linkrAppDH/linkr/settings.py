@@ -148,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"  # e.g., "America/New_York" or "Europe/London"
+TIME_ZONE = "Asia/Dubai"  # Dubai timezone (UTC+4)
 
 USE_I18N = True
 
