@@ -28,6 +28,7 @@ import pandas as pd
 from django.http import HttpResponse
 from datetime import datetime
 from django.contrib.auth import logout
+import os
 
 def home(request):
     if request.user.is_authenticated:
@@ -171,6 +172,7 @@ def create_click_record(request, link):
     print(f"Processing IP address: {ip_address}")
     print(f"GeoIP Path: {settings.GEOIP_PATH}")
     print(f"GeoIP File exists: {(settings.GEOIP_PATH / 'GeoLite2-City.mmdb').exists()}")
+    print(f"GeoIP File size: {os.path.getsize(settings.GEOIP_PATH / 'GeoLite2-City.mmdb') if (settings.GEOIP_PATH / 'GeoLite2-City.mmdb').exists() else 'File not found'}")
 
     # Get country from IP using geoip2
     try:
